@@ -4,7 +4,7 @@
 #include<stdio.h>
 
 
-int r=0.0f, xc=0.0f, yc=0.0f;
+int r=0, xc=0, yc=0;
 
 void midcirc(int r,int xc,int yc) {
     int p=1-r;
