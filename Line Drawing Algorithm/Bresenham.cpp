@@ -3,86 +3,104 @@
 #include<stdlib.h>
 #include<stdio.h>
 
+int X1, Y1, X2, Y2;
+void line(int x1, int y1, int x2, int y2) {
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
 
-float X1=0.0f,Y1=0.0f,X2=0.0f,Y2=0.0f;
+    int sx;
+    if (x2>x1) sx=1;
+    else sx=-1;
 
-void line(float x1, float y1, float x2, float y2) {
-    float m=(y2-y1)/(x2-x1);
+    int sy;
+    if (y2>y1) sy=1;
+    else sy=-1;
 
-    if(abs(m)<=1) {
-        float dx=x2-x1;
-        float dy=y2-y1;
-        float di=2*dy-dx;
 
-        glVertex2f(x1,y1);
-        float x=x1;
-        float y=y1;
+    glVertex2f((float)x1,(float)y1);
+
+    if (dx >= dy) {
+        int di=2*dy-dx;
+
+        int x=x1;
+        int y=y1;
 
         for (int i=0;i<dx;i++) {
             if (di<0) {
-                x+=1;
-                glVertex2f(x,y);
+                x+=sx;
                 di+=(2*dy);
             } else {
-                x+=1;
-                y+=1;
-                glVertex2f(x,y);
+                x+=sx;
+                y+=sy;
                 di+=(2*(dy-dx));
             }
-            x1=x;
-            y1=y;
+            glVertex2f((float)x,(float)y);
         }
     } else {
-        float dx=x2-x1;
-        float dy=y2-y1;
-        float di=2*dx-dy;
+        int di=2*dx-dy;
 
-        glVertex2f(x1,y1);
-        float x=x1;
-        float y=y1;
+        int x=x1;
+        int y=y1;
 
         for (int i=0;i<dy;i++) {
             if (di<0) {
-                y+=1;
-                glVertex2f(x,y);
+                y+=sy;
                 di+=(2*dx);
             } else {
-                x+=1;
-                y+=1;
-                glVertex2f(x,y);
+                x+=sx;
+                y+=sy;
                 di+=(2*(dx-dy));
             }
-            x1=x;
-            y1=y;
+            glVertex2f((float)x,(float)y);
         }
     }
 }
+
 void display(void) {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_POINTS);
-    line(X1, Y1, X2, Y2);
+
+    line(X1, Y1, X2, Y1);
+    line(X2, Y1, X2, Y2);
+    line(X2, Y2, X1, Y2);
+    line(X1, Y2, X1, Y1);
     glEnd();
     glFlush();
 }
 
 void init(void) {
-    glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(-100,100,-100,100);
+    gluOrtho2D(-250, 250, -250, 250);
 }
 
 int main(int argc, char** argv) {
-    printf("Enter the value of the points");
-    scanf("%f %f %f %f", &X1,&Y1,&X2,&Y2);
+    printf("Enter the value of the points (X1 Y1 X2 Y2): ");
+    if (scanf("%d %d %d %d", &X1, &Y1, &X2, &Y2) != 4) {
+        printf("Error reading input.\n");
+        return 1;
+    }
+
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(500,500);
     glutInitWindowPosition(100,100);
-    glutCreateWindow("___");
+    glutCreateWindow("Bresenham's Integer Line Algorithm (Fixed Structure)");
     init();
     glutDisplayFunc(display);
     glutMainLoop();
 
-return 0;
+    return 0;
 }
+
+// -150 -100 100 50
+/*
+
+1 1 2 1
+2 1 2 1
+2 2 1 2
+1 2 1 2
+
+*/
